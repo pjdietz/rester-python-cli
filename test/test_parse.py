@@ -20,9 +20,15 @@ X-custom: Another header
 This is the body
 """
 
+HTTP10 = """GET /old-stuff HTTP/1.0"""
+
 NO_PROTOCOL = """
 GET /my.path.with.no.protocol
 """
+
+HOST_AND_PATH = """GET host.com/path"""
+
+SCHEME_HOST_AND_PATH = """GET http://scheme.host.com/path"""
 
 PATH_ONLY = """
 /path-only
@@ -53,6 +59,33 @@ class RequestParserTest(unittest.TestCase):
             parser.parse(request)
             args, kwargs = factory.call_args
             self.assertEqual(kwargs["method"], method)
+
+    ###
+    # Path
+    ###
+
+    def test_parses_path(self):
+
+        factory = mock.Mock()
+        parser = parse.RequestParser(factory)
+
+        requests = [
+            (GET, "/my.path"),
+            (POST_PLAIN_TEXT, "/path"),
+            (NO_PROTOCOL, "/my.path.with.no.protocol"),
+            (PATH_ONLY, "/path-only"),
+            (HOST_AND_PATH, "/path"),
+            (SCHEME_HOST_AND_PATH, "/path")
+        ]
+
+        for request, path in requests:
+            parser.parse(request)
+            args, kwargs = factory.call_args
+            self.assertEqual(kwargs["path"], path)
+
+    ###
+    # Protocol
+    ###
 
     ###
     # Headers

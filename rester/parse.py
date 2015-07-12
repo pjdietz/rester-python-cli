@@ -1,3 +1,6 @@
+from urllib.parse import urlparse
+
+
 class RequestParser():
     """Creates a new Request object given a string request"""
 
@@ -5,6 +8,10 @@ class RequestParser():
         self.request_factory = request_factory
 
     def parse(self, request):
+        """Return a Request object and a dict of configuration options"""
+
+        # Dictionary of configuration extracted from the request string.
+        config = {}
 
         request = request.strip()
 
@@ -23,12 +30,21 @@ class RequestParser():
         # The first line of the head is the request line.
         method, path, protocol = self.parse_request_line(request_line)
 
-        return self.request_factory(
+        # Ensure the path include only a path.
+        url = urlparse(path)
+        path = url[2]
+        if path[0] != "/":
+            url = urlparse("//" + path)
+            path = url[2]
+
+        rqst = self.request_factory(
             method=method,
             path=path,
             protocol=protocol,
             headers=headers,
             body=body)
+
+        return rqst, config
 
     @staticmethod
     def parse_request_line(line):
