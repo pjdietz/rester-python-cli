@@ -39,6 +39,10 @@ PATH_ONLY = """
 
 class RequestParserTest(unittest.TestCase):
 
+    ################
+    # Request Line #
+    ################
+
     ###
     # Method
     ###
@@ -107,6 +111,10 @@ class RequestParserTest(unittest.TestCase):
             args, kwargs = factory.call_args
             self.assertEqual(kwargs["protocol_version"], protocol_version)
 
+    ###########
+    # Headers #
+    ###########
+
     ###
     # Headers
     ###
@@ -121,6 +129,38 @@ class RequestParserTest(unittest.TestCase):
             "Content-type": ["text/plain"],
             "X-custom": ["Custom header", "Another header"]
         })
+
+    ###
+    # Query
+    ###
+
+    def test_parses_query_in_request_line(self):
+        # TODO
+        pass
+
+    def test_parses_protracted_query(self):
+        # TODO
+        pass
+
+    def test_parses_mixed_query(self):
+        # TODO
+        pass
+
+    ###
+    # Configuration
+    ###
+
+    def test_parses_inline_configuration_options(self):
+        # TODO
+        pass
+
+    ###
+    # Configuration
+    ###
+
+    ########
+    # Body #
+    ########
 
     ###
     # Body
@@ -139,6 +179,18 @@ class RequestParserTest(unittest.TestCase):
         parser.parse(GET)
         args, kwargs = factory.call_args
         self.assertEqual(kwargs["body"], None)
+
+    ###
+    # Forms
+    ###
+
+    def test_encodes_form_fields(self):
+        # TODO
+        pass
+
+    def test_encodes_form_fields_with_multiline_values(self):
+        # TODO
+        pass
 
 if __name__ == '__main__':
     unittest.main()
