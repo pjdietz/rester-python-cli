@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
 
-class RequestParser():
+class RequestParser:
     """Creates a new Request object given a string request"""
 
     def __init__(self, request_factory):
@@ -12,6 +12,9 @@ class RequestParser():
 
         # Dictionary of configuration extracted from the request string.
         config = {}
+
+        # Defaults
+        protocol_version = "1.1"
 
         request = request.strip()
 
@@ -30,6 +33,9 @@ class RequestParser():
         # The first line of the head is the request line.
         method, path, protocol = self.parse_request_line(request_line)
 
+        if protocol and protocol == "HTTP/1.0":
+            protocol_version = "1.0"
+
         # Ensure the path include only a path.
         url = urlparse(path)
         path = url[2]
@@ -42,7 +48,8 @@ class RequestParser():
             path=path,
             protocol=protocol,
             headers=headers,
-            body=body)
+            body=body,
+            protocol_version=protocol_version)
 
         return rqst, config
 

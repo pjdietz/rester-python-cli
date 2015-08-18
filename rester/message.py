@@ -13,6 +13,6 @@ class Message(object):
 class Request(Message):
     """Represents an HTTP request"""
 
-    def __init__(self, headers=None, body=None):
+    def __init__(self, headers=None, body=None, protocol_version="1.1"):
         Message.__init__(self, headers=headers, body=body)
-
+        self.protocol_version = protocol_version

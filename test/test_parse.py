@@ -20,7 +20,7 @@ X-custom: Another header
 This is the body
 """
 
-HTTP10 = """GET /old-stuff HTTP/1.0"""
+HTTP_1_0 = """GET /old-stuff HTTP/1.0"""
 
 NO_PROTOCOL = """
 GET /my.path.with.no.protocol
@@ -49,13 +49,13 @@ class RequestParserTest(unittest.TestCase):
         parser = parse.RequestParser(factory)
 
         requests = [
-            ("GET", GET),
-            ("POST", POST_PLAIN_TEXT),
-            ("GET", NO_PROTOCOL),
-            ("GET", PATH_ONLY)
+            (GET, "GET"),
+            (POST_PLAIN_TEXT, "POST"),
+            (NO_PROTOCOL, "GET"),
+            (PATH_ONLY, "GET")
         ]
 
-        for method, request in requests:
+        for request, method in requests:
             parser.parse(request)
             args, kwargs = factory.call_args
             self.assertEqual(kwargs["method"], method)
@@ -84,8 +84,28 @@ class RequestParserTest(unittest.TestCase):
             self.assertEqual(kwargs["path"], path)
 
     ###
-    # Protocol
+    # Protocol version
     ###
+
+    def test_parses_protocol_version(self):
+
+        factory = mock.Mock()
+        parser = parse.RequestParser(factory)
+
+        requests = [
+            (GET, "1.1"),
+            (POST_PLAIN_TEXT, "1.1"),
+            (NO_PROTOCOL, "1.1"),
+            (PATH_ONLY, "1.1"),
+            (HOST_AND_PATH, "1.1"),
+            (SCHEME_HOST_AND_PATH, "1.1"),
+            (HTTP_1_0, "1.0")
+        ]
+
+        for request, protocol_version in requests:
+            parser.parse(request)
+            args, kwargs = factory.call_args
+            self.assertEqual(kwargs["protocol_version"], protocol_version)
 
     ###
     # Headers
